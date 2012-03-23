@@ -25,7 +25,7 @@ require.config({
    }
  }
 });
-require(['app/views/MainView'], function(MainView){
+require(['app/views/MainView', 'app/views/TweetView'], function(MainView, TweetView){
 
   var mainView = new MainView();
 
