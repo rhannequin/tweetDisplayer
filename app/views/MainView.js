@@ -1,4 +1,4 @@
-define(["use!backbone"], function(Backbone) {
+define(["use!backbone", "text!app/views/template.html"], function(Backbone, tmpl) {
 
   return Backbone.View.extend({
 
@@ -6,6 +6,7 @@ define(["use!backbone"], function(Backbone) {
 
     initialize: function() {
       _.bindAll(this, 'render');
+      this.tmpl = _.template(tmpl);
 
       this.render();
     },
@@ -30,12 +31,10 @@ define(["use!backbone"], function(Backbone) {
         url: "http://api.twitter.com/1/statuses/show/" + query + '.json',
         dataType: 'jsonp',
         success: function(data) {
-          var content = '';
-          content += '<ul>';
-          content += '<li>Author : ' + data.user.name + '</li>';
-          content += '<li>Tweet : ' + data.text + '</li>';
-          content += '</ul>';
-          $('#tweet').html(content);
+          $('#tweet').html(that.tmpl({
+            userName: data.user.name,
+            text: data.text
+          }));
         }
       });
     },
