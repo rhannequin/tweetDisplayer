@@ -1,48 +1,32 @@
-var MainView = Backbone.View.extend({
-
-  el: 'body',
-
-  initialize: function() {
-    _.bindAll(this, 'render');
-
-    this.render();
+require.config({
+  baseUrl: "/workspace/github/tweetDisplayer/",
+  paths: {
+    "jquery": "lib/jquery.min",
+    "backbone": "lib/backbone.min",
+    "underscore": "lib/underscore.min",
+    "i18n": "lib/require/i18n.min",
+    "order": "lib/require/order.min",
+    "text": "lib/require/text.min",
+    "use": "lib/require/use.min"
   },
 
-  render: function( event ){
-    this.$el.append('<p>Entrez un ID de tweet :</p>'
-                  + '<input type="text" name="id" id="id" />'
-                  + '<button>Go!</button>'
-                  + '<div id="tweet"></div>');
-    return this;
-  },
+  use: {
+   "underscore": {
+     attach: "_"
+   },
+   "jquery": {
+    attach: "$"
+   },
+  "backbone": {
+     deps: ["use!underscore", "use!jquery"],
+     attach: function(_, $) {
+       return Backbone;
+     }
+   }
+ }
+});
+require(['app/views/MainView', 'app/views/TweetView'], function(MainView, TweetView){
 
-  events: {
-    'click button': 'makeRequest'
-  },
-
-  makeRequest: function( event ) {
-    var that = this;
-    var query = getId($('input').val());
-    $.ajax({
-      type: "GET",
-      url: "http://api.twitter.com/1/statuses/show/" + query + '.json',
-      dataType: 'jsonp',
-      success: function(data) {
-        var content = '';
-        content += '<ul>';
-        content += '<li>Author : ' + data.user.name + '</li>';
-        content += '<li>Tweet : ' + data.text + '</li>';
-        content += '</ul>';
-        $('#tweet').html(content);
-      }
-    });
-  }
+  var mainView = new MainView();
 
 });
-
-var mainView = new MainView();
-
-function getId(str) {
-  var array = str.split('/');
-  return array[array.length - 1];
-}
